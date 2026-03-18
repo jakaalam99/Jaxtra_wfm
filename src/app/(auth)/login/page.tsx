@@ -24,7 +24,15 @@ export default function LoginPage() {
     });
 
     if (error) {
-      setError("Email atau password salah.");
+      if (error.message.toLowerCase().includes("user not found") || error.message.toLowerCase().includes("not found")) {
+        setError("User tidak ditemukan");
+      } else if (error.message.toLowerCase().includes("invalid login credentials")) {
+        // Fallback checks; by default Supabase lumps these both into "Invalid login credentials". 
+        // Showing standard fallback based on user enumeration protections.
+        setError("Email atau Password salah");
+      } else {
+        setError(error.message);
+      }
       setLoading(false);
     } else {
       router.push("/");
