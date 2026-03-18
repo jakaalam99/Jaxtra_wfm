@@ -55,7 +55,8 @@ export default function DashboardPage() {
         const hrs = Number(a.overtime_hours) || 0;
         totalLembur += hrs;
         if (!lemburMap[a.employee_id]) {
-          lemburMap[a.employee_id] = { name: a.employees?.name || "Unknown", hours: 0 };
+          const emp = a.employees as any;
+          lemburMap[a.employee_id] = { name: emp?.name || "Unknown", hours: 0 };
         }
         lemburMap[a.employee_id].hours += hrs;
       });
