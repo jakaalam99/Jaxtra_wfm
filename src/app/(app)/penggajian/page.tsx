@@ -505,7 +505,8 @@ export default function PenggajianPage() {
                       onClick={() => exportPDFSlips(p.employee.id)} 
                       className="h-8 px-3 flex items-center gap-1.5 bg-white border-blue-200 text-blue-600 text-[10px] font-bold uppercase tracking-wider shadow-sm"
                     >
-                      <Download className="w-3 h-3" /> Slip
+                      <Download className="w-4 h-4 shrink-0" /> <span className="ml-1">Slip</span>
+
                     </Button>
                   )}
                 </div>

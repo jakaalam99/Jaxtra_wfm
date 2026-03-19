@@ -193,22 +193,23 @@ export default function KaryawanPage() {
                       <div className="text-sm font-bold text-emerald-600">Rp {emp.base_rate.toLocaleString("id-ID")}</div>
 
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2 shrink-0 ml-4">
                       <Button 
                         variant="ghost" 
                         onClick={() => openEditModal(emp)}
-                        className="h-9 w-9 p-0 text-slate-400 hover:text-[var(--color-primary-600)] hover:bg-[var(--color-primary-50)]"
+                        className="h-10 w-10 p-0 text-slate-400 hover:text-[var(--color-primary-600)] hover:bg-[var(--color-primary-50)]"
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil className="w-5 h-5" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         onClick={() => handleDelete(emp.id)}
-                        className="h-9 w-9 p-0 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                        className="h-10 w-10 p-0 text-slate-400 hover:text-red-600 hover:bg-red-50"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-5 h-5" />
                       </Button>
                     </div>
+
                   </div>
                 ))
               )}
