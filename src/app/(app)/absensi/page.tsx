@@ -167,49 +167,116 @@ export default function AbsensiPage() {
             <p>Memuat data absensi...</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <Table className="min-w-[800px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nama Karyawan</TableHead>
-                  <TableHead className="w-[150px] text-center">Status</TableHead>
-                  <TableHead className="w-[150px]">Lembur (Jam)</TableHead>
-                  <TableHead>Catatan</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {employees.length === 0 ? (
+          <>
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <Table className="min-w-[800px]">
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center text-slate-500">
-                      Belum ada data karyawan. Tambahkan karyawan terlebih dahulu.
-                    </TableCell>
+                    <TableHead>Nama Karyawan</TableHead>
+                    <TableHead className="w-[150px] text-center">Status</TableHead>
+                    <TableHead className="w-[150px]">Lembur (Jam)</TableHead>
+                    <TableHead>Catatan</TableHead>
                   </TableRow>
-                ) : (
-                  employees.map((emp) => {
-                    const record = attendanceMap[emp.id];
-                    if (!record) return null;
+                </TableHeader>
+                <TableBody>
+                  {employees.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center text-slate-500">
+                        Belum ada data karyawan. Tambahkan karyawan terlebih dahulu.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    employees.map((emp) => {
+                      const record = attendanceMap[emp.id];
+                      if (!record) return null;
 
-                    const isHadir = record.status === "Hadir";
+                      const isHadir = record.status === "Hadir";
 
-                    return (
-                      <TableRow key={emp.id} className={!isHadir ? "bg-red-50/30" : ""}>
-                        <TableCell>
-                          <div className="font-medium text-slate-900">{emp.name}</div>
-                          <div className="text-xs text-slate-500">{emp.position}</div>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <button
-                            onClick={() => handleStatusToggle(emp.id)}
-                            className={`px-3 py-1.5 rounded-md text-sm font-medium transition-colors w-full ${
-                              isHadir 
-                                ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-200" 
-                                : "bg-red-100 text-red-700 hover:bg-red-200"
-                            }`}
-                          >
-                            {record.status}
-                          </button>
-                        </TableCell>
-                        <TableCell>
+                      return (
+                        <TableRow key={emp.id} className={!isHadir ? "bg-red-50/30" : ""}>
+                          <TableCell>
+                            <div className="font-medium text-slate-900">{emp.name}</div>
+                            <div className="text-xs text-slate-500">{emp.position}</div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <button
+                              onClick={() => handleStatusToggle(emp.id)}
+                              title="Klik untuk ubah status"
+                              className={`px-3 py-1.5 rounded-md text-sm font-bold transition-all border-b-2 active:translate-y-[1px] active:border-b-0 w-full flex items-center justify-center gap-2 ${
+                                isHadir 
+                                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100" 
+                                  : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
+                              }`}
+                            >
+                              <div className={`w-2 h-2 rounded-full ${isHadir ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`}></div>
+                              {record.status}
+                            </button>
+
+                          </TableCell>
+                          <TableCell className={record.overtime_hours > 0 ? "bg-emerald-50/30" : ""}>
+                            <Input
+                              type="number"
+                              min="0"
+                              step="0.5"
+                              value={record.overtime_hours || ""}
+                              onChange={(e) => handleChange(emp.id, "overtime_hours", parseFloat(e.target.value) || 0)}
+                              disabled={!isHadir}
+                              className={`text-center font-bold ${!isHadir ? "opacity-50" : record.overtime_hours > 0 ? "text-emerald-700 border-emerald-300 ring-1 ring-emerald-50/50" : ""}`}
+                              placeholder="0"
+                            />
+                          </TableCell>
+
+                          <TableCell>
+                            <Input
+                              type="text"
+                              value={record.notes || ""}
+                              onChange={(e) => handleChange(emp.id, "notes", e.target.value)}
+                              placeholder="Opsional..."
+                            />
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="block md:hidden divide-y divide-slate-100 bg-white">
+              {employees.length === 0 ? (
+                <div className="p-12 text-center text-slate-500 text-sm italic">Belum ada data karyawan.</div>
+              ) : (
+                employees.map((emp) => {
+                  const record = attendanceMap[emp.id];
+                  if (!record) return null;
+                  const isHadir = record.status === "Hadir";
+
+                  return (
+                    <div key={emp.id} className={`p-4 space-y-4 transition-colors ${!isHadir ? "bg-red-50/30" : ""}`}>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <h4 className="font-bold text-slate-900 leading-tight">{emp.name}</h4>
+                          <p className="text-xs text-slate-500">{emp.position}</p>
+                        </div>
+                        <button
+                          onClick={() => handleStatusToggle(emp.id)}
+                          className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider transition-all border-b-2 active:translate-y-[1px] active:border-b-0 flex items-center gap-2 ${
+                            isHadir 
+                              ? "bg-emerald-50 text-emerald-600 border-emerald-200" 
+                              : "bg-red-50 text-red-600 border-red-200"
+                          }`}
+                        >
+                          <div className={`w-1.5 h-1.5 rounded-full ${isHadir ? "bg-emerald-500 animate-pulse" : "bg-red-500"}`}></div>
+                          {record.status}
+                        </button>
+
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase font-bold text-slate-400 tracking-widest pl-1">Jam Lembur</label>
                           <Input
                             type="number"
                             min="0"
@@ -217,25 +284,27 @@ export default function AbsensiPage() {
                             value={record.overtime_hours || ""}
                             onChange={(e) => handleChange(emp.id, "overtime_hours", parseFloat(e.target.value) || 0)}
                             disabled={!isHadir}
-                            className={!isHadir ? "opacity-50" : ""}
+                            className={`h-9 text-sm ${!isHadir ? "opacity-50" : ""}`}
                             placeholder="0"
                           />
-                        </TableCell>
-                        <TableCell>
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] uppercase font-bold text-slate-400 tracking-widest pl-1">Catatan</label>
                           <Input
                             type="text"
                             value={record.notes || ""}
                             onChange={(e) => handleChange(emp.id, "notes", e.target.value)}
-                            placeholder="Opsional..."
+                            className="h-9 text-sm"
+                            placeholder="Catatan opsional..."
                           />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>
